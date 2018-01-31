@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 
-class BookShelf extends Component {
+class BookSearch extends Component {
   render() {
-    return (
+    return(
       <div></div>
     )
   }
 }
 
-export default BookShelf;
+export default BookSearch; 
