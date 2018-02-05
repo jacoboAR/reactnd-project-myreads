@@ -7,7 +7,7 @@ import propTypes from 'prop-types';
 class SearchBooks extends Component {
   static propTypes = {
     shelfBooks: propTypes.array.isRequired,
-    onShelfChange: propTypes.func.isRequired
+    handleChange: propTypes.func.isRequired
   };
   state = {
     searchResults: []
@@ -33,7 +33,7 @@ class SearchBooks extends Component {
     let book = this.state.searchResults.find(book => book.id === currentBook.id);
     book.shelf = newShelf;
     this.setState({books: this.state.searchResults});
-    this.props.onShelfChange(currentBook, newShelf);
+    this.props.handleChange(currentBook, newShelf);
   };
 
   render() {
@@ -46,7 +46,7 @@ class SearchBooks extends Component {
               />
           </div>
         </div>
-        <BookShelf bookShelfName="Search Results" books={this.state.searchResults} onShelfChange={this.changeBookStatus}
+        <BookShelf bookShelfName="Search Results" books={this.state.searchResults} handleChange={this.changeBookStatus}
           />
       </div>
     )
