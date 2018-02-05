@@ -1,52 +1,66 @@
-import React, { Component } from 'react'
-import * as BooksAPI from './BooksAPI'
-import './App.css'
-import BookShelf from './BookShelf'
-import SearchBooks from './SearchBooks'
-import { Route } from 'react-router-dom'
+import React, { Component } from 'react';
+import { Route } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import * as BooksAPI from './BooksAPI';
+import BookSearch from './BookSearch';
+import BookShelf from './BookShelf';
+import './App.css';
 
 class App extends Component {
-  state={
-    books: []
-  }
 
-  getAllBooks = () => {
-    BooksAPI.getAll().then(books => {
-      this.setState({books})
-    })
+  state = {
+    books : []
   }
 
   componentDidMount() {
-    this.getAllBooks()
+    BooksAPI.getAll().then(books => {
+      this.setState({books})
+    })
+    .catch(error => console.log(error));
   }
 
-  handleChange = (bookId, newShelfValue) => {
-    BooksAPI.update({id: bookId},newShelfValue)
-    this.getAllBooks()
-  }
+  handleChange = (currentBook, newShelf) => {
+    let shelfBook = this.state.books.find(book => book.id === currentBook.id);
+    if (shelfBook) {
+      shelfBook.shelf = newShelf;
+      this.setState({books: this.state.books});
+    } else {
+      shelfBook = currentBook;
+      shelfBook.shelf = newShelf;
+      this.setState(prevState => ({books: prevState.books.concat(shelfBook)}))
+    }
+    BooksAPI.update(shelfBook, currentBook.shelf).then();
+    };
 
   render() {
+    const currentlyReading = this.state.books.filter(book => book.shelf === 'currentlyReading');
+    const wantToRead = this.state.books.filter(book => book.shelf === 'wantToRead');
+    const read = this.state.books.filter(book => book.shelf === 'read');
     return (
       <div className="app">
-          <Route exact path="/" render={()=>( 
-            <div>
-              <div className="list-books">
-                <div className="list-books-title">
-                  <h1>MyReads</h1>
-                </div>
-                <div className="list-books-content">
-                  <BookShelf books={this.state.books} handleChange={this.handleChange} shelf="currentlyReading" shelfTitle="Currently Reading"/>
-                  <BookShelf books={this.state.books} handleChange={this.handleChange} shelf="wantToRead" shelfTitle="Want to Read"/>
-                  <BookShelf books={this.state.books} handleChange={this.handleChange} shelf="read" shelfTitle="Read"/>
-                </div>
+        <Route exact path="/" render={() => (
+          <div className="list-books">
+            <div className="list-books-title">
+              <h1>MyReads</h1>
+            </div>
+            <div className="list-books-content">
+              <div>
+                <BookShelf shelfTitle="Currently Reading" books={currentlyReading} handleChange={this.handleChange} />
+                <BookShelf shelfTitle="Want to Read" books={wantToRead} handleChange={this.handleChange} />
+                <BookShelf shelfTitle="Read" books={read} handleChange={this.handleChange} />
+              </div>
+              <div className="open-search">
+                <Link to="/search">Search for books</Link>
               </div>
             </div>
-          )} />
-          <Route exact path="/search" render={()=>(
-            <SearchBooks getAllBooks={this.getAllBooks} books={this.state.books}/>
-          )} />
+          </div>
+        )}/>
+        <Route path="/search" render={() => (
+          <BookSearch shelfBooks={this.state.books} handleChange={this.handleChange}
+        />
+        )}/>
       </div>
-    )
+    );
   }
 }
 
