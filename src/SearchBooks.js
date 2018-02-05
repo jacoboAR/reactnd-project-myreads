@@ -9,7 +9,6 @@ class SearchBooks extends Component {
     srBooks: []
   }
 
-  //Search for Books that matches the SearchCriteria and map the correct Shelf Value
   searchBooks = (SearchCriteria) => {
     BooksAPI.search(SearchCriteria).then(res => {
     const resBooks=res.map(srBook=> {

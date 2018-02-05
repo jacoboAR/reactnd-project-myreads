@@ -10,19 +10,16 @@ class App extends Component {
     books: []
   }
 
-  //to get all Books.
   getAllBooks = () => {
     BooksAPI.getAll().then(books => {
       this.setState({books})
     })
   }
 
-  // API Call to get all the Books initiall before the WebSite is rendered.
   componentDidMount() {
     this.getAllBooks()
   }
 
-  // This function is triggered within the onChange function when the bookShelf is changed.
   handleChange = (bookId, newShelfValue) => {
     BooksAPI.update({id: bookId},newShelfValue)
     this.getAllBooks()
